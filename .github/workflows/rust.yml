@@ -13,12 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: cargo build --verbose
+        run: python make.py
       - name: Upload executable artifact
         uses: actions/upload-artifact@v2
         with:
           name: Windows Build Output
-          path: ./target/debug/
+          path: ./distrib
 
 
   build_linux:
@@ -30,10 +30,10 @@ jobs:
       run: sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev -y
     - uses: actions/checkout@v2
     - name: Build
-      run: cargo build --verbose
+      run: ./make.py build --verbose
     - name: Upload executable artifact
       uses: actions/upload-artifact@v2
       with:
         name: Linux Build Output 
-        path: ./target/debug/
+        path: ./distrib
   
