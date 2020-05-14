@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: get-cmake
-      uses: lukka/get-cmake@v3.17.2
+    - name: Install glfw
+      run: apt install libglfw3-dev libglfw3
     - uses: actions/checkout@v2
     - name: Build
       run: cargo build --verbose
