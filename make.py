@@ -6,7 +6,7 @@ import shutil
 import subprocess
 
 dir_path = os.getcwd()
-dir_name = dir_path.split("/")[-1].replce("-", "_")
+dir_name = dir_path.split("/")[-1].replace("-", "_")
 resource_directory = "assets"
 distribution_dir = "distrib"
 
