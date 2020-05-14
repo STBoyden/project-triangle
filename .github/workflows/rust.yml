@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Install glfw
-      run: apt install libglfw3-dev libglfw3
+      run: sudo apt install libglfw3-dev libglfw3 -y
     - uses: actions/checkout@v2
     - name: Build
       run: cargo build --verbose
