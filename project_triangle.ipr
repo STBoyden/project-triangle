@@ -19,7 +19,7 @@
       <module fileurl="file://$PROJECT_DIR$/project_triangle.iml" filepath="$PROJECT_DIR$/project_triangle.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_14" default="false" project-jdk-name="Python 3.8" project-jdk-type="Python SDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="VcsDirectoryMappings">
