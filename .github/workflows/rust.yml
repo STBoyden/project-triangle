@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: python make.py
+        run: python make.py build --verbose
       - name: Upload executable artifact
         uses: actions/upload-artifact@v2
         with:
@@ -30,7 +30,7 @@ jobs:
       run: sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev -y
     - uses: actions/checkout@v2
     - name: Build
-      run: ./make.py build --verbose
+      run: python3 make.py build --verbose
     - name: Upload executable artifact
       uses: actions/upload-artifact@v2
       with:
