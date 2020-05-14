@@ -17,13 +17,14 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       run: cargo build --verbose
-    - name: Upload a Build Artifact
-    - uses: actions/upload-artifact@v2
+    - name: Upload executable artifact
+      uses: actions/upload-artifact@v2
       with:
-        # A file, directory or wildcard pattern that describes what to upload
+        name: Build Output
         path: ./target/debug/project_triangle
-    - uses: actions/upload-artifact@v2
+    - name: Upload assets artifacts
+      uses: actions/upload-artifact@v2
       with:
-        # A file, directory or wildcard pattern that describes what to upload
+        name: Build Output
         path: ./assets/
   
