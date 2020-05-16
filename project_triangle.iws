@@ -23,8 +23,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b99baf17-f8bc-4b7f-b0be-f585fabdc7f9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/project_triangle.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/project_triangle.ipr" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/pause_menu.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/rust.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/rust.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/project_triangle.iws" beforeDir="false" afterPath="$PROJECT_DIR$/project_triangle.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/game.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/game.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gui/gui_button.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/gui_button.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gui/gui_component.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/gui_component.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gui/gui_cursor.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/gui_cursor.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/menu.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/menu.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/player.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/player.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +47,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Python Script" />
+        <option value="Rust File" />
       </list>
     </option>
   </component>
@@ -66,8 +76,15 @@
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="inlay.hints.Rust" />
   </component>
-  <component name="RunManager" selected="Shell Script.Run (asset move)">
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/src/components" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Cargo Command.Run (no asset move)">
     <configuration name="Run (no asset move)" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="channel" value="DEFAULT" />
       <option name="command" value="run" />
@@ -137,5 +154,25 @@
       <screen x="72" y="27" width="1848" height="1053" />
     </state>
     <state x="779" y="311" width="424" height="491" key="FileChooserDialogImpl/72.27.1848.1053@72.27.1848.1053" timestamp="1589418389545" />
+    <state width="1802" height="385" key="GridCell.Tab.0.bottom" timestamp="1589589968964">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1802" height="385" key="GridCell.Tab.0.bottom/72.27.1848.1053@72.27.1848.1053" timestamp="1589589968964" />
+    <state width="1802" height="385" key="GridCell.Tab.0.center" timestamp="1589589968962">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1802" height="385" key="GridCell.Tab.0.center/72.27.1848.1053@72.27.1848.1053" timestamp="1589589968962" />
+    <state width="1802" height="385" key="GridCell.Tab.0.left" timestamp="1589589968962">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1802" height="385" key="GridCell.Tab.0.left/72.27.1848.1053@72.27.1848.1053" timestamp="1589589968961" />
+    <state width="1802" height="385" key="GridCell.Tab.0.right" timestamp="1589589968963">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state width="1802" height="385" key="GridCell.Tab.0.right/72.27.1848.1053@72.27.1848.1053" timestamp="1589589968963" />
+    <state x="485" y="188" width="1022" height="737" key="SettingsEditor" timestamp="1589590573733">
+      <screen x="72" y="27" width="1848" height="1053" />
+    </state>
+    <state x="485" y="188" width="1022" height="737" key="SettingsEditor/72.27.1848.1053@72.27.1848.1053" timestamp="1589590573733" />
   </component>
 </project>

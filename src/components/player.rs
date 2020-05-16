@@ -13,7 +13,7 @@ impl Player {
         }
     }
 
-    pub fn _draw(&mut self, draw_handler: &mut RaylibDrawHandle) {
+    pub fn draw (&mut self, draw_handler: &mut RaylibDrawHandle) {
         draw_handler.draw_rectangle(self.position.x as i32, self.position.y as i32, self.size,
                                     self.size, Color::RED);
     }

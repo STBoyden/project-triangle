@@ -1,5 +1,8 @@
 use raylib::prelude::*;
 
+use super::gui_component::GuiComponentBehaviour;
+use super::gui_cursor::Cursor;
+
 pub struct Button<'a> {
     pub position: Vector2,
     pub dimensions: Vector2,
@@ -34,8 +37,8 @@ impl<'a> Button<'a> {
     }
 }
 
-impl super::gui_component::GuiComponentBehaviour for Button<'_> {
-    fn draw(&mut self, cursor: &super::gui_cursor::Cursor, draw_handler: &mut RaylibDrawHandle) {
+impl GuiComponentBehaviour for Button<'_> {
+    fn draw(&mut self, cursor: &Cursor, draw_handler: &mut RaylibDrawHandle) {
         let mouse_position = cursor.position;
         self.is_hovered(&mouse_position);
         self.is_clicked(cursor);
@@ -62,7 +65,7 @@ impl super::gui_component::GuiComponentBehaviour for Button<'_> {
         self.hovered
     }
 
-    fn is_clicked(&mut self, cursor: &super::gui_cursor::Cursor) -> bool {
+    fn is_clicked(&mut self, cursor: &Cursor) -> bool {
         let is_inside = super::is_inside(self.position, &self.dimensions, &cursor.position);
         let is_clicked = is_inside && cursor.is_clicked;
 

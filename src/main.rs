@@ -1,28 +1,23 @@
 use raylib::core::math::Vector2;
 
-mod game;
-mod player;
-mod menu;
+mod components;
 mod gui;
 
 fn main() {
+    use components::player::Player;
+    use components::game::*;
+    use gui::gui_cursor::Cursor;
+
     let screen_width = 1280;
     let screen_height = 720;
 
-    let mut player = player::Player::new(
-        Vector2::new((screen_width / 2) as f32, (screen_height / 2) as f32)
-    );
-    let mut cursor = gui::gui_cursor::Cursor::new(
-        Vector2::new((screen_width / 2) as f32, (screen_height / 2) as f32)
-    );
+    let mut player = Player::new(Vector2::new((screen_width / 2) as f32,
+                                                     (screen_height / 2) as f32));
+    let mut cursor = Cursor::new(Vector2::new((screen_width / 2) as f32,
+                                                     (screen_height / 2) as f32));
     let mut title = String::from("Triangular Tribulations");
-    let menu = menu::Menu::new();
-    let mut game = game::Game {
-        player: &mut player,
-        cursor: &mut cursor,
-        title: &mut title,
-        menu,
-    };
+    let mut initial_state = GameStates::Menu;
+    let mut game = Game::new(&mut player, &mut cursor, &mut title, &mut initial_state);
 
     game.initialise(screen_width, screen_height);
 }
