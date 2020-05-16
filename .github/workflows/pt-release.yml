@@ -1,0 +1,38 @@
+name: Project Triangle (release builds)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_win:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: python make-release.py build --verbose --release
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows Build Output (release)
+          path: ./distrib
+
+
+  build_linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install Raylib dependencies
+        run: sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev -y
+      - uses: actions/checkout@v2
+      - name: Build
+        run: python3 make-release.py build --verbose --release
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Linux Build Output (release)
+          path: ./distrib
+
