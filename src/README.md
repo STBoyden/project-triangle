@@ -1,0 +1,10 @@
+# Triangular Tribulations
+
+Developed in Rust, this prototype game/game engine was made for me to learn Rust using the game C library, 
+Raylib (main: https://github.com/raysan5/raylib, Rust bindings: https://github.com/deltaphc/raylib-rs). 
+
+The current debug builds can be found going [here](https://github.com/STBoyden/project-triangle/actions) and clicking on
+the most recent commit build. You can find the most recent debug builds for both Windows and Linux.
+
+Please excuse any "bad Rust" as I am new to the language, but I am improving by working on this project, no matter how 
+painful and annoying it can be working with Rust.
