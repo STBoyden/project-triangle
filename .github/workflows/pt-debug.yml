@@ -1,4 +1,4 @@
-name: Rust
+name: Project Triangle (debug builds)
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 jobs:
   build_win:
     runs-on: windows-latest
-    
+
     steps:
       - uses: actions/checkout@v2
       - name: Build
@@ -35,4 +35,4 @@ jobs:
       with:
         name: Linux Build Output (debug)
         path: ./distrib
-  
+
