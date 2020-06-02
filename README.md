@@ -14,6 +14,6 @@ painful and annoying it can be working with Rust.
 
 
 ## Building and Running
-If you haven't got Rust, install Rust [https://rustup.rs](here).
+If you haven't got Rust, install Rust [here](https://rustup.rs).
 
 Once Rust is installed or if you already have it installed, clone this repository using `git` or download the zip file and simple run `./make.sh --release` to build the the release build. The binary for your OS should then be in `target/release/`.
