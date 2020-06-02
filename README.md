@@ -11,3 +11,9 @@ clicking on the most recent commit build. You can find the most recent debug bui
 
 Please excuse any "bad Rust" as I am new to the language, but I am improving by working on this project, no matter how 
 painful and annoying it can be working with Rust.
+
+
+## Building and Running
+If you haven't got Rust, install Rust [https://rustup.rs](here).
+
+Once Rust is installed or if you already have it installed, clone this repository using `git` or download the zip file and simple run `./make.sh --release` to build the the release build. The binary for your OS should then be in `target/release/`.
