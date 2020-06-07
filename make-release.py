@@ -28,4 +28,8 @@ print(f"--- [ Copying {'Linux' if os.name == 'posix' else 'Windows'} files ] ---
 shutil.copytree(Path(f"{dir_path}/{resource_directory}"), Path(f"{dir_path}/{distribution_dir}/{resource_directory}"))
 shutil.copyfile(Path(f"{dir_path}/target/release/{dir_name}{'' if os.name == 'posix' else '.exe'}"), \
                 Path(f"{dir_path}/{distribution_dir}/{dir_name}{'' if os.name == 'posix' else '.exe'}"))
+
+if os.name == "posix":
+    subprocess.call(["strip"], ["--strip-all"], ["target/release/project_triangle"])
+
 print("Done")
