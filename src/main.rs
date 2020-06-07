@@ -7,6 +7,8 @@ fn main() {
     use components::player::Player;
     use components::game::*;
     use gui::gui_cursor::Cursor;
+use components::{game::*, player::Player};
+use gui::gui_cursor::Cursor;
 
     let screen_width = 1280;
     let screen_height = 720;
