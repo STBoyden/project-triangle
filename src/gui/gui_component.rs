@@ -1,15 +1,15 @@
 use raylib::prelude::*;
 
 use super::gui_cursor::Cursor;
-
-// struct GuiComponent {
-// 	pub position: Vector2,
-// 	pub dimensions: Vector2
-// }
-
+use crate::components::game::GameStates;
 
 pub trait GuiComponentBehaviour {
-    fn draw(&mut self, cursor: &Cursor, draw_handler: &mut RaylibDrawHandle);
+    fn draw(
+        &mut self,
+        cursor: &Cursor,
+        draw_handler: &mut RaylibDrawHandle,
+        state: &mut GameStates,
+    );
     fn is_hovered(&mut self, mouse_position: &Vector2) -> bool;
-    fn is_clicked(&mut self, cursor: &Cursor) -> bool;
+    fn is_clicked(&mut self, cursor: &Cursor, state: &mut GameStates) -> bool;
 }
