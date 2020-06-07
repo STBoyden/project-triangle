@@ -1,15 +1,13 @@
 use raylib::prelude::*;
 
-use super::gui_component::GuiComponentBehaviour;
-use super::gui_cursor::Cursor;
 use super::{gui_component::GuiComponentBehaviour, gui_cursor::Cursor};
 use crate::components::game::GameStates;
 
-pub struct Button<'a> {
+pub struct Button {
     pub position: Vector2,
     pub dimensions: Vector2,
     pub button_text: String,
-    action: &'a mut bool,
+    action_args: String,
     hovered: bool,
     normal_colour: Color,
     hover_colour: Color,
@@ -17,19 +15,21 @@ pub struct Button<'a> {
     text_colour: Color,
 }
 
-static mut DEFAULT_ACTION: bool = false;
-
-unsafe fn default_action<'a>() -> &'a mut bool { &mut DEFAULT_ACTION }
-
-impl<'a> Button<'a> {
-    pub fn new(button_text: String, position: Vector2, dimensions: Vector2,
-               action: Option<&'a mut bool>, normal_colour: Color, hover_colour: Color,
-               text_colour: Option<Color>) -> Self {
+impl Button {
+    pub fn new(
+        button_text: String,
+        position: Vector2,
+        dimensions: Vector2,
+        action_args: String,
+        normal_colour: Color,
+        hover_colour: Color,
+        text_colour: Option<Color>,
+    ) -> Self {
         Button {
             position,
             dimensions,
             button_text,
-            action: unsafe { action.unwrap_or(default_action()) },
+            action_args,
             hovered: false,
             normal_colour,
             hover_colour,
@@ -39,11 +39,11 @@ impl<'a> Button<'a> {
     }
 }
 
-impl GuiComponentBehaviour for Button<'_> {
-    fn draw(&mut self, cursor: &Cursor, draw_handler: &mut RaylibDrawHandle) {
+impl GuiComponentBehaviour for Button {
+    fn draw(&mut self, cursor: &Cursor, draw_handler: &mut RaylibDrawHandle, state: &mut GameStates) {
         let mouse_position = cursor.position;
         self.is_hovered(&mouse_position);
-        self.is_clicked(cursor);
+        self.is_clicked(cursor, state);
 
         let text_position = Vector2::new(
             self.position.x + 10_f32,
@@ -51,8 +51,13 @@ impl GuiComponentBehaviour for Button<'_> {
         );
 
         draw_handler.draw_rectangle_v(self.position, self.dimensions, self.current_colour);
-        draw_handler.draw_text(self.button_text.as_ref(), text_position.x as i32,
-                               text_position.y as i32, 20, self.text_colour);
+        draw_handler.draw_text(
+            self.button_text.as_ref(),
+            text_position.x as i32,
+            text_position.y as i32,
+            20,
+            self.text_colour,
+        );
     }
 
     fn is_hovered(&mut self, mouse_position: &Vector2) -> bool {
@@ -67,15 +72,12 @@ impl GuiComponentBehaviour for Button<'_> {
         self.hovered
     }
 
-    fn is_clicked(&mut self, cursor: &Cursor) -> bool {
+    fn is_clicked(&mut self, cursor: &Cursor, state: &mut GameStates) -> bool {
         let is_inside = super::is_inside(self.position, &self.dimensions, &cursor.position);
         let is_clicked = is_inside && cursor.is_clicked;
 
         if is_clicked {
-            match self.action {
-                true => *self.action = false,
-                _ => *self.action = true,
-            }
+            crate::components::change_state(state, self.action_args.as_ref());
         }
 
         is_clicked
