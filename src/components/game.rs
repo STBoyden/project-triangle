@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 use raylib::prelude::*;
+use std::collections::HashMap;
 
 use super::player::Player;
 use crate::gui::gui_cursor::Cursor;
+use super::{menu::*, pause_menu::*, player::Player};
+use crate::gui::gui_cursor::*;
 
 #[repr(u32)]
 #[derive(Debug)]

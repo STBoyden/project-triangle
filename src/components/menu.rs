@@ -4,6 +4,8 @@ use crate::components::game::GameStates;
 use crate::gui::gui_component::GuiComponentBehaviour;
 use crate::gui::gui_button::Button;
 use crate::gui::gui_cursor::Cursor;
+use crate::consts::*;
+use crate::gui::{gui_button::Button, gui_component::GuiComponentBehaviour, gui_cursor::Cursor};
 
 pub struct Menu<'a> {
     pub current_state: &'a mut GameStates,

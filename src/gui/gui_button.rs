@@ -2,6 +2,8 @@ use raylib::prelude::*;
 
 use super::gui_component::GuiComponentBehaviour;
 use super::gui_cursor::Cursor;
+use super::{gui_component::GuiComponentBehaviour, gui_cursor::Cursor};
+use crate::components::game::GameStates;
 
 pub struct Button<'a> {
     pub position: Vector2,

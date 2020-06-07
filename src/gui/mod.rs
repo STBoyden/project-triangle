@@ -2,6 +2,7 @@ use raylib::core::math::Vector2;
 
 pub mod gui_component;
 pub mod gui_button;
+pub mod gui_component;
 pub mod gui_cursor;
 
 fn is_inside(position: Vector2, dimensions: &Vector2, mouse_position: &Vector2) -> bool {
