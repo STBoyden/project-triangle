@@ -30,6 +30,6 @@ shutil.copyfile(Path(f"{dir_path}/target/release/{dir_name}{'' if os.name == 'po
                 Path(f"{dir_path}/{distribution_dir}/{dir_name}{'' if os.name == 'posix' else '.exe'}"))
 
 if os.name == "posix":
-    subprocess.call(["strip"], ["--strip-all"], ["target/release/project_triangle"])
+    subprocess.call(["strip", "--strip-all", "target/release/project_triangle"])
 
 print("Done")
