@@ -8,3 +8,10 @@ edition = "2018"
 
 [dependencies]
 raylib = {git = "https://github.com/deltaphc/raylib-rs", branch = "master"}
+
+[profile.release]
+opt-level = 3
+lto = true
+debug = false
+codegen-units = 1
+panic = "abort"
