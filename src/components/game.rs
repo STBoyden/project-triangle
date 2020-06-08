@@ -1,7 +1,7 @@
 use raylib::prelude::*;
 use std::collections::HashMap;
 
-use super::{menu::*, pause_menu::*, player::Player};
+use super::{entity::Entity, menu::*, pause_menu::*};
 use crate::gui::gui_cursor::*;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -14,6 +14,7 @@ pub enum GameStates {
 
 pub struct Game<'a> {
     player: &'a mut Player,
+    player: &'a mut Entity,
     cursor: &'a mut Cursor,
     title: &'a mut str,
     pub current_state: &'a mut GameStates,
@@ -22,6 +23,7 @@ pub struct Game<'a> {
 impl Game<'_> {
     pub fn new<'a>(
         player: &'a mut Player,
+        player: &'a mut Entity,
         cursor: &'a mut Cursor,
         title: &'a mut str,
         current_state: &'a mut GameStates,
