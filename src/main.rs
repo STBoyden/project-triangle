@@ -4,7 +4,7 @@ mod components;
 mod gui;
 mod consts;
 
-use components::{game::*, player::Player};
+use components::{game::*, entity::Entity};
 use gui::gui_cursor::Cursor;
 
 fn main() {
@@ -12,6 +12,7 @@ fn main() {
     let screen_height = 720;
 
     let mut player = Player::new(Vector2::new(
+    let mut player = Entity::new(Vector2::new(
         (screen_width / 2) as f32,
         (screen_height / 2) as f32,
     ));
