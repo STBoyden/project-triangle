@@ -13,32 +13,71 @@ pub enum GameStates {
 }
 
 pub struct Game<'a> {
-    player: &'a mut Player,
     player: &'a mut Entity,
+    player_initial: Entity,
     cursor: &'a mut Cursor,
     title: &'a mut str,
+    width: i32,
+    height: i32,
     pub current_state: &'a mut GameStates,
 }
 
 impl Game<'_> {
     pub fn new<'a>(
-        player: &'a mut Player,
         player: &'a mut Entity,
         cursor: &'a mut Cursor,
         title: &'a mut str,
+        width: i32,
+        height: i32,
         current_state: &'a mut GameStates,
     ) -> Game<'a> {
         Game {
+            player_initial: player.clone(),
             player,
             cursor,
             title,
+            width,
+            height,
             current_state,
         }
     }
 
-    pub fn initialise(&mut self, width: i32, height: i32) {
-        let (mut rl_handler, rl_thread) =
-            raylib::init().size(width, height).title(self.title).build();
+    fn handle_keys(&mut self, rl_handler: &mut RaylibHandle) {
+        if rl_handler.is_key_released(KeyboardKey::KEY_F11) {
+            rl_handler.toggle_fullscreen();
+
+            if rl_handler.get_screen_height() != self.height {
+                rl_handler.set_window_size(self.width, self.height);
+            }
+        }
+
+        match *self.current_state {
+            GameStates::Playing => {
+                if rl_handler.is_key_released(KeyboardKey::KEY_ESCAPE) {
+                    *self.current_state = GameStates::Paused;
+                }
+
+                if rl_handler.is_key_down(KeyboardKey::KEY_A) {
+                    self.player.move_pos(rl_handler, -10.0, false);
+                } else if rl_handler.is_key_down(KeyboardKey::KEY_D) {
+                    self.player.move_pos(rl_handler, 10.0, false);
+                }
+            }
+            GameStates::Paused => {
+                if rl_handler.is_key_released(KeyboardKey::KEY_ESCAPE) {
+                    *self.current_state = GameStates::Playing;
+                }
+            }
+            GameStates::Menu => {}
+            _ => {}
+        }
+    }
+
+    pub fn initialise(&mut self) {
+        let (mut rl_handler, rl_thread) = raylib::init()
+            .size(self.width, self.height)
+            .title(self.title)
+            .build();
 
         rl_handler.disable_cursor();
         rl_handler.set_exit_key(Option::None);
@@ -64,6 +103,8 @@ impl Game<'_> {
                 break;
             }
 
+            self.handle_keys(handler);
+
             let mut draw_func = handler.begin_drawing(thread);
             draw_func.clear_background(Color::WHITE);
 
@@ -71,26 +112,26 @@ impl Game<'_> {
                 GameStates::Menu => {
                     let mut menu = Menu::new(&mut self.current_state);
                     menu.draw(&self.cursor, &mut draw_func);
+                    if *self.player != self.player_initial {
+                        self.reset();
+                    }
                     self.cursor.draw(&mut draw_func, tex_map["cursor"]);
                 }
                 GameStates::Paused => {
                     let mut pause_menu = PauseMenu::new(&mut self.current_state);
+                    self.player.draw(&mut draw_func);
                     pause_menu.draw(&self.cursor, &mut draw_func);
                     self.cursor.draw(&mut draw_func, tex_map["cursor"]);
-
-                    if draw_func.is_key_released(KeyboardKey::KEY_ESCAPE) {
-                        *self.current_state = GameStates::Playing;
-                    }
                 }
                 GameStates::Playing => {
                     self.player.draw(&mut draw_func);
-
-                    if draw_func.is_key_released(KeyboardKey::KEY_ESCAPE) {
-                        *self.current_state = GameStates::Paused;
-                    }
                 }
                 _ => {}
             }
         }
+    }
+
+    fn reset(&mut self) {
+        *self.player = self.player_initial;
     }
 }
