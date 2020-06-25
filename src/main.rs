@@ -4,20 +4,19 @@ mod components;
 mod consts;
 mod gui;
 
-use components::{game::*, entity::Entity};
+use components::{entity::Entity, game::*};
+use consts::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use gui::gui_cursor::Cursor;
 
 fn main() {
-    let screen_width = 1280;
-    let screen_height = 720;
-
     let mut player = Entity::new(Vector2::new(
-        (screen_width / 2) as f32,
-        (screen_height / 2) as f32,
+        (SCREEN_WIDTH / 2) as f32,
+        (SCREEN_HEIGHT / 2) as f32,
     ));
+
     let mut cursor = Cursor::new(Vector2::new(
-        (screen_width / 2) as f32,
-        (screen_height / 2) as f32,
+        (SCREEN_WIDTH / 2) as f32,
+        (SCREEN_HEIGHT / 2) as f32,
     ));
 
     let mut title = String::from("Triangular Tribulations");
@@ -26,8 +25,8 @@ fn main() {
         &mut player,
         &mut cursor,
         &mut title,
-        screen_width,
-        screen_height,
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT,
         &mut initial_state,
     );
 
