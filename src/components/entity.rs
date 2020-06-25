@@ -14,12 +14,9 @@ impl Entity {
         }
     }
 
-    pub fn move_pos(&mut self, handler: &RaylibHandle, speed: f32, is_vertical: bool) {
-        if is_vertical {
-            self.position.y += speed * (handler.get_frame_time() * 100.0) as f32;
-        } else {
-            self.position.x += speed * (handler.get_frame_time() * 100.0) as f32;
-        }
+    pub fn move_pos(&mut self, deltas: (f32, f32)) {
+        self.position.x += deltas.0;
+        self.position.y += deltas.1;
     }
 
     pub fn draw(&mut self, draw_handler: &mut RaylibDrawHandle) {
