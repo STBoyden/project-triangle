@@ -45,10 +45,6 @@ impl Game<'_> {
     fn handle_keys(&mut self, rl_handler: &mut RaylibHandle) {
         if rl_handler.is_key_released(KeyboardKey::KEY_F11) {
             rl_handler.toggle_fullscreen();
-
-            if rl_handler.get_screen_height() != self.height {
-                rl_handler.set_window_size(self.width, self.height);
-            }
         }
 
         match *self.current_state {
@@ -58,9 +54,9 @@ impl Game<'_> {
                 }
 
                 if rl_handler.is_key_down(KeyboardKey::KEY_A) {
-                    self.player.move_pos(rl_handler, -10.0, false);
+                    self.player.move_pos((-10.0, 0.0));
                 } else if rl_handler.is_key_down(KeyboardKey::KEY_D) {
-                    self.player.move_pos(rl_handler, 10.0, false);
+                    self.player.move_pos((10.0, 0.0));
                 }
             }
             GameStates::Paused => {
@@ -79,8 +75,9 @@ impl Game<'_> {
             .title(self.title)
             .build();
 
-        rl_handler.disable_cursor();
+        // rl_handler.disable_cursor();
         rl_handler.set_exit_key(Option::None);
+        rl_handler.set_target_fps(60);
 
         let mut texture_map = HashMap::new();
         let cursor_texture = rl_handler
@@ -104,9 +101,9 @@ impl Game<'_> {
             }
 
             self.handle_keys(handler);
-
             let mut draw_func = handler.begin_drawing(thread);
             draw_func.clear_background(Color::WHITE);
+            draw_func.draw_fps(0, 0);
 
             match self.current_state {
                 GameStates::Menu => {
@@ -115,13 +112,13 @@ impl Game<'_> {
                     if *self.player != self.player_initial {
                         self.reset();
                     }
-                    self.cursor.draw(&mut draw_func, tex_map["cursor"]);
+                    self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
                 }
                 GameStates::Paused => {
                     let mut pause_menu = PauseMenu::new(&mut self.current_state);
                     self.player.draw(&mut draw_func);
                     pause_menu.draw(&self.cursor, &mut draw_func);
-                    self.cursor.draw(&mut draw_func, tex_map["cursor"]);
+                    self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
                 }
                 GameStates::Playing => {
                     self.player.draw(&mut draw_func);

@@ -14,14 +14,17 @@ impl Cursor {
         }
     }
 
-    pub fn draw(&mut self, draw_handler: &mut RaylibDrawHandle, sprite: &Texture2D) {
+    pub fn draw(&mut self, draw_handler: &mut RaylibDrawHandle, sprite: &Texture2D, do_draw: bool) {
         self.position = draw_handler.get_mouse_position();
         self.is_clicked = draw_handler.is_mouse_button_released(MOUSE_LEFT_BUTTON);
-        draw_handler.draw_texture(
-            sprite,
-            self.position.x as i32,
-            self.position.y as i32,
-            Color::WHITE,
-        );
+
+        if do_draw {
+            draw_handler.draw_texture(
+                sprite,
+                self.position.x as i32,
+                self.position.y as i32,
+                Color::WHITE,
+            );
+        }
     }
 }
