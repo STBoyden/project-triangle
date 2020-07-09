@@ -1,8 +1,10 @@
 pub mod entity;
 pub mod game;
+pub mod map;
+pub mod map_gen;
 pub mod menu;
+pub mod object;
 pub mod pause_menu;
-pub mod physics_body;
 
 use game::GameStates;
 

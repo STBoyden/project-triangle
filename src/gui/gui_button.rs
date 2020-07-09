@@ -2,10 +2,11 @@ use raylib::prelude::*;
 
 use super::{gui_component::GuiComponentBehaviour, gui_cursor::Cursor};
 use crate::components::game::GameStates;
+use crate::types::*;
 
 pub struct Button {
-    pub position: Vector2,
-    pub dimensions: Vector2,
+    pub position: Point,
+    pub dimensions: Dimensions,
     pub button_text: String,
     action_args: String,
     hovered: bool,
@@ -18,8 +19,8 @@ pub struct Button {
 impl Button {
     pub fn new(
         button_text: String,
-        position: Vector2,
-        dimensions: Vector2,
+        position: Point,
+        dimensions: Dimensions,
         action_args: String,
         normal_colour: Color,
         hover_colour: Color,
@@ -40,27 +41,38 @@ impl Button {
 }
 
 impl GuiComponentBehaviour for Button {
-    fn draw(&mut self, cursor: &Cursor, draw_handler: &mut RaylibDrawHandle, state: &mut GameStates) {
+    fn draw(
+        &mut self,
+        cursor: &Cursor,
+        draw_handler: &mut RaylibDrawHandle,
+        state: &mut GameStates,
+    ) {
         let mouse_position = cursor.position;
         self.is_hovered(&mouse_position);
         self.is_clicked(cursor, state);
 
-        let text_position = Vector2::new(
-            self.position.x + 10_f32,
-            self.position.y + self.dimensions.y - 30_f32,
+        let text_position = (
+            self.position.0 + 10,
+            self.position.1 + self.dimensions.1 - 30,
         );
 
-        draw_handler.draw_rectangle_v(self.position, self.dimensions, self.current_colour);
+        draw_handler.draw_rectangle(
+            self.position.0,
+            self.position.1,
+            self.dimensions.0,
+            self.dimensions.1,
+            self.current_colour,
+        );
         draw_handler.draw_text(
             self.button_text.as_ref(),
-            text_position.x as i32,
-            text_position.y as i32,
+            text_position.0,
+            text_position.1,
             20,
             self.text_colour,
         );
     }
 
-    fn is_hovered(&mut self, mouse_position: &Vector2) -> bool {
+    fn is_hovered(&mut self, mouse_position: &Point) -> bool {
         self.hovered = super::is_inside(self.position, &self.dimensions, &mouse_position);
 
         if self.hovered {

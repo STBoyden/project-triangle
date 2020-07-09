@@ -1,23 +1,17 @@
-use raylib::core::math::Vector2;
-
 mod components;
 mod consts;
 mod gui;
+mod physics;
+mod types;
 
 use components::{entity::Entity, game::*};
 use consts::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use gui::gui_cursor::Cursor;
 
 fn main() {
-    let mut player = Entity::new(Vector2::new(
-        (SCREEN_WIDTH / 2) as f32,
-        (SCREEN_HEIGHT / 2) as f32,
-    ));
+    let mut player = Entity::new((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), (50, 50));
 
-    let mut cursor = Cursor::new(Vector2::new(
-        (SCREEN_WIDTH / 2) as f32,
-        (SCREEN_HEIGHT / 2) as f32,
-    ));
+    let mut cursor = Cursor::new((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 
     let mut title = String::from("Triangular Tribulations");
     let mut initial_state = GameStates::Menu;
