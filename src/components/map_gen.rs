@@ -20,7 +20,5 @@ pub fn load_map<P: AsRef<Path>>(file_path: P) -> Result<Map> {
     let reader = BufReader::new(file);
     let json = serde_json::from_reader(reader);
 
-    println!("{:?}", json);
-
     json
 }
