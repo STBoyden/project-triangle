@@ -19,11 +19,8 @@ impl PauseMenu<'_> {
         let mut buttons = vec![
             Button::new(
                 "Resume".to_string(),
-                Vector2::new(
-                    0_f32,
-                    (draw_handler.get_screen_height() as f32 / 2_f32) - 50_f32,
-                ),
-                Vector2::new(150_f32, DEFAULT_BUTTON_HEIGHT),
+                (0, (draw_handler.get_screen_height() / 2) - 50),
+                (150, DEFAULT_BUTTON_HEIGHT),
                 "play".to_string(),
                 Color::GRAY,
                 Color::DARKGRAY,
@@ -31,8 +28,8 @@ impl PauseMenu<'_> {
             ),
             Button::new(
                 "Quit to menu".to_string(),
-                Vector2::new(0_f32, draw_handler.get_screen_height() as f32 / 2_f32),
-                Vector2::new(150_f32, DEFAULT_BUTTON_HEIGHT),
+                (0, (draw_handler.get_screen_height() / 2)),
+                (150, DEFAULT_BUTTON_HEIGHT),
                 "menu".to_string(),
                 Color::GRAY,
                 Color::DARKGRAY,

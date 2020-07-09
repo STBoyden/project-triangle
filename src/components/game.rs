@@ -1,8 +1,9 @@
 use raylib::prelude::*;
 use std::collections::HashMap;
 
-use super::{entity::Entity, menu::*, pause_menu::*};
+use super::{entity::Entity, map::Map, map_gen::load_map, menu::*, pause_menu::*};
 use crate::gui::gui_cursor::*;
+use crate::physics::rigid_body::RigidBody;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum GameStates {
@@ -19,6 +20,7 @@ pub struct Game<'a> {
     title: &'a mut str,
     width: i32,
     height: i32,
+    pub map: Map,
     pub current_state: &'a mut GameStates,
 }
 
@@ -39,6 +41,7 @@ impl Game<'_> {
             width,
             height,
             current_state,
+            map: load_map("maps/map-test.json").ok().unwrap(),
         }
     }
 
@@ -54,9 +57,9 @@ impl Game<'_> {
                 }
 
                 if rl_handler.is_key_down(KeyboardKey::KEY_A) {
-                    self.player.move_pos((-10.0, 0.0));
+                    self.player.move_pos((-10, 0));
                 } else if rl_handler.is_key_down(KeyboardKey::KEY_D) {
-                    self.player.move_pos((10.0, 0.0));
+                    self.player.move_pos((10, 0));
                 }
             }
             GameStates::Paused => {
@@ -75,9 +78,10 @@ impl Game<'_> {
             .title(self.title)
             .build();
 
-        // rl_handler.disable_cursor();
         rl_handler.set_exit_key(Option::None);
         rl_handler.set_target_fps(60);
+
+        self.player_initial.set_pos(self.map.spawn_point);
 
         let mut texture_map = HashMap::new();
         let cursor_texture = rl_handler
@@ -103,7 +107,6 @@ impl Game<'_> {
             self.handle_keys(handler);
             let mut draw_func = handler.begin_drawing(thread);
             draw_func.clear_background(Color::WHITE);
-            draw_func.draw_fps(0, 0);
 
             match self.current_state {
                 GameStates::Menu => {
@@ -116,15 +119,23 @@ impl Game<'_> {
                 }
                 GameStates::Paused => {
                     let mut pause_menu = PauseMenu::new(&mut self.current_state);
+                    for object in self.map.objects.iter_mut() {
+                        object.draw(&mut draw_func);
+                    }
                     self.player.draw(&mut draw_func);
                     pause_menu.draw(&self.cursor, &mut draw_func);
                     self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
                 }
                 GameStates::Playing => {
+                    for object in self.map.objects.iter_mut() {
+                        object.draw(&mut draw_func);
+                    }
                     self.player.draw(&mut draw_func);
                 }
                 _ => {}
             }
+
+            draw_func.draw_fps(0, 0);
         }
     }
 
