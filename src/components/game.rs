@@ -10,6 +10,7 @@ pub enum GameStates {
     Menu,
     Paused,
     Playing,
+    Resetting,
     Quitting,
 }
 
@@ -135,11 +136,20 @@ impl Game<'_> {
                     self.player.update_physics(&self.map.entities);
                     self.player.draw(&mut draw_func);
                 }
+                GameStates::Resetting => {
+                    self.reload_map();
+
+                    *self.current_state = GameStates::Playing;
+                }
                 _ => {}
             }
 
             draw_func.draw_fps(0, 0);
         }
+    }
+
+    fn reload_map(&mut self) {
+        self.player.set_pos(self.map.spawn_point);
     }
 
     fn reset(&mut self) {

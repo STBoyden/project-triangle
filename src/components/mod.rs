@@ -14,6 +14,7 @@ pub fn change_state(state: &mut GameStates, state_str: &str) {
         "paused" => *state = GameStates::Paused,
         "quit" => *state = GameStates::Quitting,
         "play" => *state = GameStates::Playing,
+        "play_reset" => *state = GameStates::Resetting,
         _ => {}
     }
 }
