@@ -1,6 +1,4 @@
-use crate::physics::{
-    physics_body::PhysicsBody, physics_collider::PhysicsCollider, rigid_body::RigidBody,
-};
+use crate::physics::{physics_collider::PhysicsCollider, rigid_body::RigidBody};
 use crate::types::*;
 use raylib::prelude::*;
 use serde::Deserialize;
@@ -27,10 +25,6 @@ impl Entity {
     }
 }
 
-impl PhysicsBody for Entity {
-    fn update_physics(&mut self) {}
-}
-
 impl PhysicsCollider for Entity {
     fn get_pos(&self) -> Point {
         self.position
@@ -42,6 +36,14 @@ impl PhysicsCollider for Entity {
 }
 
 impl RigidBody for Entity {
+    fn update_physics<T: PhysicsCollider>(&mut self, others: &[T]) {
+        others.into_iter().for_each(|other| {
+            if !other.is_colliding(*self) {
+                self.move_pos((0, 9));
+            }
+        });
+    }
+
     fn move_pos(&mut self, deltas: Point) {
         self.position.0 += deltas.0;
         self.position.1 += deltas.1;
