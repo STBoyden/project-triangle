@@ -27,8 +27,17 @@ impl PauseMenu<'_> {
                 Option::None,
             ),
             Button::new(
-                "Quit to menu".to_string(),
+                "Reset level".to_string(),
                 (0, (draw_handler.get_screen_height() / 2)),
+                (150, DEFAULT_BUTTON_HEIGHT),
+                "play_reset".to_string(),
+                Color::GRAY,
+                Color::DARKGRAY,
+                Option::None,
+            ),
+            Button::new(
+                "Quit to menu".to_string(),
+                (0, (draw_handler.get_screen_height() / 2) + 50),
                 (150, DEFAULT_BUTTON_HEIGHT),
                 "menu".to_string(),
                 Color::GRAY,
