@@ -130,6 +130,9 @@ impl Game<'_> {
                     for object in self.map.objects.iter_mut() {
                         object.draw(&mut draw_func);
                     }
+
+                    self.player.update_physics(&self.map.objects);
+                    self.player.update_physics(&self.map.entities);
                     self.player.draw(&mut draw_func);
                 }
                 _ => {}
