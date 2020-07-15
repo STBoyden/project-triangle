@@ -1,4 +1,4 @@
-use crate::physics::{physics_collider::PhysicsCollider, rigid_body::RigidBody};
+use crate::physics::{physics_body::PhysicsBody, physics_collider::PhysicsCollider};
 use crate::types::*;
 use raylib::prelude::*;
 use serde::Deserialize;
@@ -35,13 +35,28 @@ impl PhysicsCollider for Entity {
     }
 }
 
-impl RigidBody for Entity {
-    fn update_physics<T: PhysicsCollider>(&mut self, others: &[T]) {
-        others.into_iter().for_each(|other| {
-            if !other.is_colliding(*self) {
-                self.move_pos((0, 9));
+impl PhysicsBody for Entity {
+    fn try_fall<T: PhysicsCollider>(&mut self, others: &[T]) {
+        let fall_speed = 10; //0;
+
+        self.try_move((0, fall_speed), others);
+    }
+
+    fn try_move<T: PhysicsCollider>(&mut self, deltas: Point, others: &[T]) {
+        self.move_pos(deltas);
+        let res = others.into_iter().map(|other| other.is_colliding(*self));
+
+        let mut can_move = true;
+
+        res.into_iter().for_each(|result| {
+            if result {
+                can_move = false;
             }
         });
+
+        if !can_move {
+            self.move_pos((-deltas.0, -deltas.1));
+        }
     }
 
     fn move_pos(&mut self, deltas: Point) {

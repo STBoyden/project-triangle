@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 use super::{entity::Entity, map::Map, map_gen::load_map, menu::*, pause_menu::*};
 use crate::gui::gui_cursor::*;
-use crate::physics::rigid_body::RigidBody;
+use crate::physics::physics_body::PhysicsBody;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum GameStates {
@@ -57,10 +57,11 @@ impl Game<'_> {
                     *self.current_state = GameStates::Paused;
                 }
 
+                let move_speed = 10;
                 if rl_handler.is_key_down(KeyboardKey::KEY_A) {
-                    self.player.move_pos((-10, 0));
+                    self.player.try_move((-move_speed, 0), &self.map.objects);
                 } else if rl_handler.is_key_down(KeyboardKey::KEY_D) {
-                    self.player.move_pos((10, 0));
+                    self.player.try_move((move_speed, 0), &self.map.objects);
                 }
             }
             GameStates::Paused => {
@@ -130,6 +131,7 @@ impl Game<'_> {
                 GameStates::Playing => {
                     for object in self.map.objects.iter_mut() {
                         object.draw(&mut draw_func);
+                        self.player.try_fall(&self.map.entities);
                     }
 
                     self.player.update_physics(&self.map.objects);
