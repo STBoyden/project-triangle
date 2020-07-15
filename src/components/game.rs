@@ -63,6 +63,18 @@ impl Game<'_> {
                 } else if rl_handler.is_key_down(KeyboardKey::KEY_D) {
                     self.player.try_move((move_speed, 0), &self.map.objects);
                 }
+
+                #[cfg(debug_assertions)]
+                if rl_handler.is_key_down(KeyboardKey::KEY_R) {
+                    self.reload_map();
+                }
+
+                #[cfg(debug_assertions)]
+                if rl_handler.is_key_down(KeyboardKey::KEY_LEFT_CONTROL)
+                    && rl_handler.is_mouse_button_down(MouseButton::MOUSE_LEFT_BUTTON)
+                {
+                    self.player.set_pos(self.cursor.position);
+                }
             }
             GameStates::Paused => {
                 if rl_handler.is_key_released(KeyboardKey::KEY_ESCAPE) {
@@ -101,17 +113,30 @@ impl Game<'_> {
         thread: &RaylibThread,
         tex_map: &HashMap<String, &Texture2D>,
     ) {
+        #[allow(unused_variables)]
+        let mut should_draw_cursor = true;
+
         while !handler.window_should_close() {
             if *self.current_state == GameStates::Quitting {
                 break;
             }
 
             self.handle_keys(handler);
+
+            #[cfg(not(debug_assertions))]
+            if should_draw_cursor {
+                handler.show_cursor();
+            } else {
+                handler.hide_cursor();
+            }
+
             let mut draw_func = handler.begin_drawing(thread);
             draw_func.clear_background(Color::WHITE);
 
+            #[allow(unused_assignments)]
             match self.current_state {
                 GameStates::Menu => {
+                    should_draw_cursor = true;
                     let mut menu = Menu::new(&mut self.current_state);
                     menu.draw(&self.cursor, &mut draw_func);
                     if *self.player != self.player_initial {
@@ -120,6 +145,7 @@ impl Game<'_> {
                     self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
                 }
                 GameStates::Paused => {
+                    should_draw_cursor = true;
                     let mut pause_menu = PauseMenu::new(&mut self.current_state);
                     for object in self.map.objects.iter_mut() {
                         object.draw(&mut draw_func);
@@ -131,12 +157,16 @@ impl Game<'_> {
                 GameStates::Playing => {
                     for object in self.map.objects.iter_mut() {
                         object.draw(&mut draw_func);
+                    should_draw_cursor = false;
                         self.player.try_fall(&self.map.entities);
                     }
 
                     self.player.update_physics(&self.map.objects);
                     self.player.update_physics(&self.map.entities);
                     self.player.draw(&mut draw_func);
+
+                    #[cfg(debug_assertions)]
+                    self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
                 }
                 GameStates::Resetting => {
                     self.reload_map();
