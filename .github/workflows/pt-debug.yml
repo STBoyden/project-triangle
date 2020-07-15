@@ -25,14 +25,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install Raylib dependencies
-      run: sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev -y
-    - uses: actions/checkout@v2
-    - name: Build
-      run: python3 make.py build --verbose
-    - name: Upload executable artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: Linux Build Output (debug)
-        path: ./distrib
+      - name: Update Ubuntu repositories
+        run: sudo apt update -y
+      - name: Install Raylib dependencies
+        run: sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev -y
+      - uses: actions/checkout@v2
+      - name: Build
+        run: python3 make.py build --verbose
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Linux Build Output (debug)
+          path: ./distrib
 
