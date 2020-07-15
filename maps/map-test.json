@@ -1,8 +1,11 @@
 {
     "map_name": "Test Map",
-    "spawn_point": [100, 100],
+    "spawn_point": [700, 100],
     "objects": [
-        {"size": [700, 30], "position": [100, 700]}
+        {"size": [700, 30], "position": [100, 700]},
+        {"size": [700, 30], "position": [100, 500]},
+        {"size": [700, 30], "position": [100, 300]},
+        {"size": [30, 700], "position": [300, 0]}
     ],
     "entities": []
 }
