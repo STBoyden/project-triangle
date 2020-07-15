@@ -155,14 +155,24 @@ impl Game<'_> {
                     self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
                 }
                 GameStates::Playing => {
-                    for object in self.map.objects.iter_mut() {
-                        object.draw(&mut draw_func);
                     should_draw_cursor = false;
+
+                    if self.map.objects.len() > 0 {
+                        for object in self.map.objects.iter_mut() {
+                            object.draw(&mut draw_func);
+                        }
+
+                        self.player.try_fall(&self.map.objects);
+                    }
+
+                    if self.map.entities.len() > 0 {
+                        for entity in self.map.entities.iter_mut() {
+                            entity.draw(&mut draw_func);
+                        }
+
                         self.player.try_fall(&self.map.entities);
                     }
 
-                    self.player.update_physics(&self.map.objects);
-                    self.player.update_physics(&self.map.entities);
                     self.player.draw(&mut draw_func);
 
                     #[cfg(debug_assertions)]
