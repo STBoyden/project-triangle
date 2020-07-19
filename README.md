@@ -1,4 +1,4 @@
-# Triangular Tribulations
+# Project Triangle
 
 ![Project Triangle (debug builds)](https://github.com/STBoyden/project-triangle/workflows/Project%20Triangle%20(debug%20builds)/badge.svg)
 ![Project Triangle (release builds)](https://github.com/STBoyden/project-triangle/workflows/Project%20Triangle%20(release%20builds)/badge.svg)
