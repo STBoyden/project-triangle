@@ -13,7 +13,7 @@ fn main() {
 
     let mut cursor = Cursor::new((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
 
-    let mut title = String::from("Triangular Tribulations");
+    let mut title = String::from("Project Triangle");
     let mut initial_state = GameStates::Menu;
     let mut game = Game::new(
         &mut player,
