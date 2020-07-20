@@ -15,7 +15,12 @@ impl PauseMenu<'_> {
         }
     }
 
-    pub fn draw(&mut self, cursor: &Cursor, draw_handler: &mut RaylibDrawHandle) {
+    pub fn draw(
+        &mut self,
+        cursor: &Cursor,
+        draw_handler: &mut RaylibDrawHandle,
+        vignette_texture: &Texture2D,
+    ) {
         let mut buttons = vec![
             Button::new(
                 "Resume".to_string(),
@@ -46,6 +51,19 @@ impl PauseMenu<'_> {
             ),
         ];
 
+        draw_handler.draw_texture_pro(
+            vignette_texture,
+            Rectangle::new(
+                0.0,
+                0.0,
+                vignette_texture.width() as f32,
+                vignette_texture.height() as f32,
+            ),
+            Rectangle::new(0.0, 0.0, SCREEN_WIDTH as f32, SCREEN_HEIGHT as f32),
+            Vector2::new(0.0, 0.0),
+            0.0,
+            Color::WHITE,
+        );
         for button in buttons.iter_mut() {
             button.draw(&cursor, draw_handler, &mut self.current_state);
         }
