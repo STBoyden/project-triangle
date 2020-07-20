@@ -104,11 +104,13 @@ impl Game<'_> {
         self.player_initial.set_pos(self.map.spawn_point);
 
         let mut texture_map = HashMap::new();
-        let cursor_texture = rl_handler
-            .load_texture(&rl_thread, "assets/cursor.png")
-            .expect("Could not load cursor image asset");
 
-        texture_map.insert("cursor".to_string(), &cursor_texture);
+        self.load_textures(
+            &mut texture_map,
+            vec!["cursor".to_string(), "vignette".to_string()],
+            &mut rl_handler,
+            &rl_thread,
+        );
 
         self.update(&mut rl_handler, &rl_thread, &texture_map);
     }
@@ -117,7 +119,7 @@ impl Game<'_> {
         &mut self,
         handler: &mut RaylibHandle,
         thread: &RaylibThread,
-        tex_map: &HashMap<String, &Texture2D>,
+        tex_map: &HashMap<String, Texture2D>,
     ) {
         #[allow(unused_variables)]
         let mut should_draw_cursor = true;
@@ -148,7 +150,7 @@ impl Game<'_> {
                     if *self.player != self.player_initial {
                         self.reset();
                     }
-                    self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
+                    self.cursor.draw(&mut draw_func, &tex_map["cursor"], false);
                 }
                 GameStates::Paused => {
                     should_draw_cursor = true;
@@ -157,8 +159,8 @@ impl Game<'_> {
                         object.draw(&mut draw_func);
                     }
                     self.player.draw(&mut draw_func);
-                    pause_menu.draw(&self.cursor, &mut draw_func);
-                    self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
+                    pause_menu.draw(&self.cursor, &mut draw_func, &tex_map["vignette"]);
+                    self.cursor.draw(&mut draw_func, &tex_map["cursor"], false);
                 }
                 GameStates::Playing => {
                     should_draw_cursor = false;
@@ -182,7 +184,7 @@ impl Game<'_> {
                     self.player.draw(&mut draw_func);
 
                     #[cfg(debug_assertions)]
-                    self.cursor.draw(&mut draw_func, tex_map["cursor"], false);
+                    self.cursor.draw(&mut draw_func, &tex_map["cursor"], false);
                 }
                 GameStates::Resetting => {
                     self.reload_map();
@@ -193,6 +195,24 @@ impl Game<'_> {
             }
 
             draw_func.draw_fps(0, 0);
+        }
+    }
+
+    fn load_textures(
+        &self,
+        texture_map: &mut HashMap<String, Texture2D>,
+        texture_names: Vec<String>,
+        handle: &mut RaylibHandle,
+        thread: &RaylibThread,
+    ) {
+        for texture_name in texture_names {
+            let error = format!("Could not load \"{}\"", texture_name);
+            let file_name = format!("assets/{}.png", texture_name);
+            let texture = handle
+                .load_texture(thread, file_name.as_str())
+                .expect(error.as_str());
+
+            texture_map.insert(texture_name, texture);
         }
     }
 
