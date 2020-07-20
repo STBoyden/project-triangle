@@ -1,7 +1,6 @@
 # Project Triangle
 
-![Project Triangle (debug builds)](https://github.com/STBoyden/project-triangle/workflows/Project%20Triangle%20(debug%20builds)/badge.svg)
-![Project Triangle (release builds)](https://github.com/STBoyden/project-triangle/workflows/Project%20Triangle%20(release%20builds)/badge.svg)
+![Project Triangle](https://github.com/STBoyden/project-triangle/workflows/Project%20Triangle/badge.svg)
 
 Developed in Rust, this prototype game/game engine was made for me to learn Rust using the game C library, 
 Raylib (main: https://github.com/raysan5/raylib, Rust bindings: https://github.com/deltaphc/raylib-rs). 
