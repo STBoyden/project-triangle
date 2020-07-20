@@ -73,7 +73,13 @@ impl Game<'_> {
                 if rl_handler.is_key_down(KeyboardKey::KEY_LEFT_CONTROL)
                     && rl_handler.is_mouse_button_down(MouseButton::MOUSE_LEFT_BUTTON)
                 {
-                    self.player.set_pos(self.cursor.position);
+                    let mut position = self.cursor.position;
+                    let (offset_x, offset_y) = (position.0 % 10, position.1 % 10);
+
+                    position.0 -= offset_x;
+                    position.1 -= offset_y;
+
+                    self.player.set_pos(position);
                 }
             }
             GameStates::Paused => {
