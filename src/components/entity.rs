@@ -1,5 +1,5 @@
 use crate::physics::{physics_body::PhysicsBody, physics_collider::PhysicsCollider};
-use crate::types::*;
+use ptgui::prelude::*;
 use raylib::prelude::*;
 use serde::Deserialize;
 
@@ -13,8 +13,10 @@ impl Entity {
     pub fn new(position: Point, size: Dimensions) -> Self {
         Entity { position, size }
     }
+}
 
-    pub fn draw(&mut self, draw_handler: &mut RaylibDrawHandle) {
+impl Drawable for Entity {
+    fn draw(&mut self, draw_handler: &mut RaylibDrawHandle) {
         draw_handler.draw_rectangle(
             self.position.0,
             self.position.1,
@@ -44,11 +46,11 @@ impl PhysicsBody for Entity {
 
     fn try_move<T: PhysicsCollider>(&mut self, deltas: Point, others: &[T]) {
         self.move_pos(deltas);
-        let res = others.into_iter().map(|other| other.is_colliding(*self));
+        let res = others.iter().map(|other| other.is_colliding(*self));
 
         let mut can_move = true;
 
-        res.into_iter().for_each(|result| {
+        res.for_each(|result| {
             if result {
                 can_move = false;
             }

@@ -1,6 +1,6 @@
 use super::entity::Entity;
 use super::object::Object;
-use crate::types::*;
+use ptgui::prelude::*;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]

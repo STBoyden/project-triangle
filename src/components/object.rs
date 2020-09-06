@@ -1,8 +1,8 @@
+use ptgui::prelude::*;
 use raylib::prelude::*;
 use serde::Deserialize;
 
 use crate::physics::physics_collider::PhysicsCollider;
-use crate::types::*;
 
 #[derive(Deserialize, Copy, Clone, Debug)]
 pub struct Object {
@@ -10,8 +10,8 @@ pub struct Object {
     size: Dimensions,
 }
 
-impl Object {
-    pub fn draw(&mut self, draw_handler: &mut RaylibDrawHandle) {
+impl Drawable for Object {
+    fn draw(&mut self, draw_handler: &mut RaylibDrawHandle) {
         draw_handler.draw_rectangle(
             self.position.0,
             self.position.1,

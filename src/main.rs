@@ -1,12 +1,10 @@
 mod components;
 mod consts;
-mod gui;
 mod physics;
 mod types;
 
 use components::{entity::Entity, game::*};
 use consts::{SCREEN_HEIGHT, SCREEN_WIDTH};
-use gui::gui_cursor::Cursor;
 
 fn main() {
     let mut player = Entity::new((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), (50, 50));

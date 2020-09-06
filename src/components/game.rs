@@ -1,9 +1,15 @@
+use ptgui::prelude::*;
 use raylib::prelude::*;
 use std::collections::HashMap;
 
-use super::{entity::Entity, map::Map, map_gen::load_map, menu::*, pause_menu::*};
-use crate::gui::gui_cursor::*;
-use crate::physics::physics_body::PhysicsBody;
+use crate::physics::{physics_body::PhysicsBody, physics_collider::PhysicsCollider};
+
+use super::{
+    entity::Entity,
+    map::Map,
+    map_gen::load_map,
+    settings_loader::{load_settings, read_settings, GameSettings},
+};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum GameStates {
@@ -22,7 +28,11 @@ pub struct Game<'a> {
     width: i32,
     height: i32,
     pub map: Map,
-    pub current_state: &'a mut GameStates,
+    pub current_state: GameStates,
+    main_menu: GuiHandler<GameStates>,
+    pause_menu: GuiHandler<GameStates>,
+    settings_menu: GuiHandler<GameStates>,
+    clear_colour: Colour,
 }
 
 impl Game<'_> {
@@ -43,6 +53,10 @@ impl Game<'_> {
             height,
             current_state,
             map: load_map("maps/map-test.json").ok().unwrap(),
+            main_menu: GuiHandler::new(clear_colour),
+            pause_menu: GuiHandler::new(clear_colour),
+            settings_menu: GuiHandler::new(clear_colour),
+            clear_colour,
         }
     }
 
@@ -103,23 +117,37 @@ impl Game<'_> {
 
         self.player_initial.set_pos(self.map.spawn_point);
 
-        let mut texture_map = HashMap::new();
+        self.main_menu
+            .add_button_with_position("Start", "play", button_position)
+            .add_button("Settings", "settings_menu")
+            .add_button("Quit", "quit")
+            .set_button_fix_widths(true)
+            .set_button_action_function(|state, action| super::change_state(state, action));
 
-        self.load_textures(
-            &mut texture_map,
-            vec!["cursor".to_string(), "vignette".to_string()],
-            &mut rl_handler,
-            &rl_thread,
-        );
+        self.pause_menu
+            .add_button_with_position("Resume", "play", button_position)
+            .add_button("Reset level", "play_reset")
+            .add_button("Quit to menu", "menu")
+            .set_button_fix_widths(true)
+            .set_button_action_function(|state, action| super::change_state(state, action));
 
-        self.update(&mut rl_handler, &rl_thread, &texture_map);
+        self.settings_menu
+            .add_button_with_position("Toggle FPS", "settings_menu_toggle_fps", button_position)
+            .add_button("Toggle fullscreen", "settings_menu_toggle_fullscreen")
+            .add_button("Resolution", "")
+            .add_button("Back to menu", "menu")
+            .set_button_fix_widths(true)
+            .set_button_action_function(|state, action| super::change_state(state, action));
+
+        self.update(&mut rl_handler, &rl_thread, player, settings);
     }
 
     fn update(
         &mut self,
         handler: &mut RaylibHandle,
         thread: &RaylibThread,
-        tex_map: &HashMap<String, Texture2D>,
+        player: &mut Entity,
+        settings: GameSettings,
     ) {
         #[allow(unused_variables)]
         let mut should_draw_cursor = true;
@@ -134,8 +162,10 @@ impl Game<'_> {
             #[cfg(not(debug_assertions))]
             if should_draw_cursor {
                 handler.show_cursor();
+                handler.enable_cursor();
             } else {
                 handler.hide_cursor();
+                handler.disable_cursor();
             }
 
             let mut draw_func = handler.begin_drawing(thread);
@@ -145,18 +175,34 @@ impl Game<'_> {
             match self.current_state {
                 GameStates::Menu => {
                     should_draw_cursor = true;
-                    let mut menu = Menu::new(&mut self.current_state);
-                    menu.draw(&self.cursor, &mut draw_func);
-                    if *self.player != self.player_initial {
-                        self.reset();
+                    let mut draw_func = self
+                        .main_menu
+                        .execute_actions(&mut self.current_state)
+                        .draw(handler, thread)
+                        .unwrap();
+                    if player.get_pos() != self.map.spawn_point {
+                        self.reset(player);
+                    }
+                    if settings.show_fps {
+                        draw_func.draw_fps(0, 0);
                     }
                     self.cursor.draw(&mut draw_func, &tex_map["cursor"], false);
                 }
                 GameStates::Paused => {
                     should_draw_cursor = true;
-                    let mut pause_menu = PauseMenu::new(&mut self.current_state);
-                    for object in self.map.objects.iter_mut() {
-                        object.draw(&mut draw_func);
+                    self.pause_menu.clear_external_draws();
+                    for objects in self.map.objects.iter_mut() {
+                        self.pause_menu.add_external_draw(Box::new(*objects));
+                    }
+                    let mut draw_func = self
+                        .pause_menu
+                        .execute_actions(&mut self.current_state)
+                        .add_external_draw(Box::new(*player))
+                        .draw(handler, thread)
+                        .unwrap();
+
+                    if settings.show_fps {
+                        draw_func.draw_fps(0, 0);
                     }
                     self.player.draw(&mut draw_func);
                     pause_menu.draw(&self.cursor, &mut draw_func, &tex_map["vignette"]);
@@ -183,8 +229,22 @@ impl Game<'_> {
 
                     self.player.draw(&mut draw_func);
 
-                    #[cfg(debug_assertions)]
-                    self.cursor.draw(&mut draw_func, &tex_map["cursor"], false);
+                    if settings.show_fps {
+                        draw_func.draw_fps(0, 0);
+                    }
+                }
+                GameStates::Settings => {
+                    should_draw_cursor = true;
+
+                    let mut draw_func = self
+                        .settings_menu
+                        .execute_actions(&mut self.current_state)
+                        .draw(handler, thread)
+                        .unwrap();
+
+                    if settings.show_fps {
+                        draw_func.draw_fps(0, 0);
+                    }
                 }
                 GameStates::Resetting => {
                     self.reload_map();
