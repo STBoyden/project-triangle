@@ -1,6 +1,6 @@
 use ptgui::prelude::*;
+use raylib::ffi::IsWindowFullscreen;
 use raylib::prelude::*;
-use std::collections::HashMap;
 
 use crate::physics::{physics_body::PhysicsBody, physics_collider::PhysicsCollider};
 
@@ -17,14 +17,12 @@ pub enum GameStates {
     Paused,
     Playing,
     Resetting,
+    Settings,
     Quitting,
 }
 
-pub struct Game<'a> {
-    player: &'a mut Entity,
-    player_initial: Entity,
-    cursor: &'a mut Cursor,
-    title: &'a mut str,
+pub struct Game {
+    title: String,
     width: i32,
     height: i32,
     pub map: Map,
@@ -35,24 +33,15 @@ pub struct Game<'a> {
     clear_colour: Colour,
 }
 
-impl Game<'_> {
-    pub fn new<'a>(
-        player: &'a mut Entity,
-        cursor: &'a mut Cursor,
-        title: &'a mut str,
-        width: i32,
-        height: i32,
-        current_state: &'a mut GameStates,
-    ) -> Game<'a> {
+impl Game {
+    pub fn new(title: &str, width: i32, height: i32, current_state: GameStates) -> Game {
+        let clear_colour = Colour::WHITE;
         Game {
-            player_initial: player.clone(),
-            player,
-            cursor,
-            title,
+            title: title.to_string(),
             width,
             height,
             current_state,
-            map: load_map("maps/map-test.json").ok().unwrap(),
+            map: load_map("maps/map-test.json").unwrap(),
             main_menu: GuiHandler::new(clear_colour),
             pause_menu: GuiHandler::new(clear_colour),
             settings_menu: GuiHandler::new(clear_colour),
@@ -60,45 +49,45 @@ impl Game<'_> {
         }
     }
 
-    fn handle_keys(&mut self, rl_handler: &mut RaylibHandle) {
+    fn handle_keys(&mut self, rl_handler: &mut RaylibHandle, player: &mut Entity) {
         if rl_handler.is_key_released(KeyboardKey::KEY_F11) {
             rl_handler.toggle_fullscreen();
         }
 
-        match *self.current_state {
+        match self.current_state {
             GameStates::Playing => {
                 if rl_handler.is_key_released(KeyboardKey::KEY_ESCAPE) {
-                    *self.current_state = GameStates::Paused;
+                    self.current_state = GameStates::Paused;
                 }
 
                 let move_speed = 10;
                 if rl_handler.is_key_down(KeyboardKey::KEY_A) {
-                    self.player.try_move((-move_speed, 0), &self.map.objects);
+                    player.try_move((-move_speed, 0), &self.map.objects);
                 } else if rl_handler.is_key_down(KeyboardKey::KEY_D) {
-                    self.player.try_move((move_speed, 0), &self.map.objects);
+                    player.try_move((move_speed, 0), &self.map.objects);
                 }
 
                 #[cfg(debug_assertions)]
                 if rl_handler.is_key_down(KeyboardKey::KEY_R) {
-                    self.reload_map();
+                    self.reload_map(player);
                 }
 
                 #[cfg(debug_assertions)]
                 if rl_handler.is_key_down(KeyboardKey::KEY_LEFT_CONTROL)
                     && rl_handler.is_mouse_button_down(MouseButton::MOUSE_LEFT_BUTTON)
                 {
-                    let mut position = self.cursor.position;
+                    let mut position = (rl_handler.get_mouse_x(), rl_handler.get_mouse_y());
                     let (offset_x, offset_y) = (position.0 % 10, position.1 % 10);
 
                     position.0 -= offset_x;
                     position.1 -= offset_y;
 
-                    self.player.set_pos(position);
+                    player.set_pos(position);
                 }
             }
             GameStates::Paused => {
                 if rl_handler.is_key_released(KeyboardKey::KEY_ESCAPE) {
-                    *self.current_state = GameStates::Playing;
+                    self.current_state = GameStates::Playing;
                 }
             }
             GameStates::Menu => {}
@@ -106,16 +95,20 @@ impl Game<'_> {
         }
     }
 
-    pub fn initialise(&mut self) {
+    pub fn initialise(&mut self, player: &mut Entity) {
         let (mut rl_handler, rl_thread) = raylib::init()
             .size(self.width, self.height)
-            .title(self.title)
+            .title(self.title.as_str())
             .build();
 
         rl_handler.set_exit_key(Option::None);
         rl_handler.set_target_fps(60);
 
-        self.player_initial.set_pos(self.map.spawn_point);
+        player.set_pos(self.map.spawn_point);
+
+        let settings = load_settings().unwrap();
+
+        let button_position = (0, 50);
 
         self.main_menu
             .add_button_with_position("Start", "play", button_position)
@@ -152,12 +145,16 @@ impl Game<'_> {
         #[allow(unused_variables)]
         let mut should_draw_cursor = true;
 
-        while !handler.window_should_close() {
-            if *self.current_state == GameStates::Quitting {
-                break;
-            }
+        while !handler.window_should_close() && self.current_state != GameStates::Quitting {
+            self.handle_keys(handler, player);
+            let mut settings = settings;
+            read_settings(&mut settings).unwrap();
 
-            self.handle_keys(handler);
+            if !unsafe { IsWindowFullscreen() } && settings.is_fullscreen {
+                handler.toggle_fullscreen();
+            } else if unsafe { IsWindowFullscreen() } && !settings.is_fullscreen {
+                handler.toggle_fullscreen();
+            }
 
             #[cfg(not(debug_assertions))]
             if should_draw_cursor {
@@ -167,9 +164,6 @@ impl Game<'_> {
                 handler.hide_cursor();
                 handler.disable_cursor();
             }
-
-            let mut draw_func = handler.begin_drawing(thread);
-            draw_func.clear_background(Color::WHITE);
 
             #[allow(unused_assignments)]
             match self.current_state {
@@ -186,7 +180,6 @@ impl Game<'_> {
                     if settings.show_fps {
                         draw_func.draw_fps(0, 0);
                     }
-                    self.cursor.draw(&mut draw_func, &tex_map["cursor"], false);
                 }
                 GameStates::Paused => {
                     should_draw_cursor = true;
@@ -204,30 +197,29 @@ impl Game<'_> {
                     if settings.show_fps {
                         draw_func.draw_fps(0, 0);
                     }
-                    self.player.draw(&mut draw_func);
-                    pause_menu.draw(&self.cursor, &mut draw_func, &tex_map["vignette"]);
-                    self.cursor.draw(&mut draw_func, &tex_map["cursor"], false);
                 }
                 GameStates::Playing => {
                     should_draw_cursor = false;
+                    let mut draw_func = handler.begin_drawing(thread);
+                    draw_func.clear_background(self.clear_colour);
 
-                    if self.map.objects.len() > 0 {
+                    if !self.map.objects.is_empty() {
                         for object in self.map.objects.iter_mut() {
                             object.draw(&mut draw_func);
                         }
 
-                        self.player.try_fall(&self.map.objects);
+                        player.try_fall(&self.map.objects);
                     }
 
-                    if self.map.entities.len() > 0 {
+                    if !self.map.entities.is_empty() {
                         for entity in self.map.entities.iter_mut() {
                             entity.draw(&mut draw_func);
                         }
 
-                        self.player.try_fall(&self.map.entities);
+                        player.try_fall(&self.map.entities);
                     }
 
-                    self.player.draw(&mut draw_func);
+                    player.draw(&mut draw_func);
 
                     if settings.show_fps {
                         draw_func.draw_fps(0, 0);
@@ -247,40 +239,20 @@ impl Game<'_> {
                     }
                 }
                 GameStates::Resetting => {
-                    self.reload_map();
+                    self.reload_map(player);
 
-                    *self.current_state = GameStates::Playing;
+                    self.current_state = GameStates::Playing;
                 }
                 _ => {}
             }
-
-            draw_func.draw_fps(0, 0);
         }
     }
 
-    fn load_textures(
-        &self,
-        texture_map: &mut HashMap<String, Texture2D>,
-        texture_names: Vec<String>,
-        handle: &mut RaylibHandle,
-        thread: &RaylibThread,
-    ) {
-        for texture_name in texture_names {
-            let error = format!("Could not load \"{}\"", texture_name);
-            let file_name = format!("assets/{}.png", texture_name);
-            let texture = handle
-                .load_texture(thread, file_name.as_str())
-                .expect(error.as_str());
-
-            texture_map.insert(texture_name, texture);
-        }
+    fn reload_map(&mut self, player: &mut Entity) {
+        player.set_pos(self.map.spawn_point);
     }
 
-    fn reload_map(&mut self) {
-        self.player.set_pos(self.map.spawn_point);
-    }
-
-    fn reset(&mut self) {
-        *self.player = self.player_initial;
+    fn reset(&mut self, player: &mut Entity) {
+        *player = Entity::new(self.map.spawn_point, player.get_size());
     }
 }

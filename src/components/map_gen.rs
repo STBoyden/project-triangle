@@ -1,24 +1,15 @@
 use super::map::Map;
-use serde_json::Result;
 use std::fs::File;
 use std::io::BufReader;
-use std::path::Path;
 
-pub fn load_map<P: AsRef<Path>>(file_path: P) -> Result<Map> {
+pub fn load_map(file_path: &str) -> Result<Map, String> {
     let file = File::open(file_path);
 
     if file.is_err() {
-        return Ok(Map {
-            map_name: "".to_string(),
-            spawn_point: (0, 0),
-            objects: vec![],
-            entities: vec![],
-        });
+        return Err(format!("Could not find file {}", file_path));
     }
 
     let file = file.ok().unwrap();
     let reader = BufReader::new(file);
-    let json = serde_json::from_reader(reader);
-
-    json
+    Ok(serde_json::from_reader(reader).unwrap())
 }

@@ -1,26 +1,37 @@
+use components::{entity::Entity, game::*, settings_loader::*};
+use consts::{SCREEN_HEIGHT, SCREEN_WIDTH};
+
 mod components;
 mod consts;
 mod physics;
 mod types;
 
-use components::{entity::Entity, game::*};
-use consts::{SCREEN_HEIGHT, SCREEN_WIDTH};
-
 fn main() {
-    let mut player = Entity::new((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), (50, 50));
+    if !check_settings() {
+        create_settings();
+    }
 
-    let mut cursor = Cursor::new((SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2));
+    let mut game_settings = GameSettings {
+        resolution: (SCREEN_WIDTH, SCREEN_HEIGHT),
+        is_fullscreen: false,
+        show_fps: false,
+    };
 
-    let mut title = String::from("Project Triangle");
-    let mut initial_state = GameStates::Menu;
+    read_settings(&mut game_settings).unwrap();
+
     let mut game = Game::new(
-        &mut player,
-        &mut cursor,
-        &mut title,
-        SCREEN_WIDTH,
-        SCREEN_HEIGHT,
-        &mut initial_state,
+        "Project Triangle",
+        game_settings.resolution.0,
+        game_settings.resolution.1,
+        GameStates::Menu,
     );
 
-    game.initialise();
+    let mut player = Entity::new(
+        (
+            game_settings.resolution.0 / 2,
+            game_settings.resolution.1 / 2,
+        ),
+        (50, 50),
+    );
+    game.initialise(&mut player);
 }
