@@ -1,5 +1,5 @@
 use super::physics_collider::PhysicsCollider;
-use crate::types::Point;
+use ptgui::prelude::*;
 
 pub trait PhysicsBody: PhysicsCollider {
     fn try_fall<T>(&mut self, others: &[T])

@@ -1,4 +1,4 @@
-use crate::types::*;
+use ptgui::prelude::*;
 use std::cmp::{max, min};
 
 pub trait PhysicsCollider {
